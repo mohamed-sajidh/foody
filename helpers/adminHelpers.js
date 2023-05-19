@@ -19,19 +19,16 @@ module.exports = {
             if(admin){
                 bcrypt.compare(loginData.password, admin.password).then((status) => {
                     if(status){
-                        console.log("login success");
                         response.admin = admin
                         response.status = true
                         resolve(response)
                     }
                     else{
-                        console.log("login failed");
                         reject({ status: false })
                     }
                 })
             }
             else{
-                console.log("login failed ...................");
                 reject({ status: false })
             }
         })
@@ -61,7 +58,37 @@ module.exports = {
                 resolve(response)
             })
         })
+    },
+
+
+    addProduct : (product) => {
+        return new Promise((resolve , reject) => {
+            db.get().collection(collection.FOOD_COLLECTION).insertOne(product).then((response) => {
+                resolve(response)
+            })
+        })
+    },
+
+
+    getAllProduct: () => {
+        return new Promise((resolve, reject) => {
+          db.get()
+            .collection(collection.FOOD_COLLECTION)
+            .find()
+            .toArray()
+            .then((products) => {
+              resolve(products);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+    },
+
+
+    productDetails : (prodId) => {
     }
+      
 
     
 }

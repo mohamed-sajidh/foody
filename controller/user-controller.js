@@ -8,13 +8,12 @@ const { response } = require('../app');
 
 
 
-
-
 module.exports = {
 
 
-    userHome : ((req , res) => {
-        res.render('user/userHome')
+    userHome : (async (req , res) => {
+        let food = await userHelpers.getAllFood()
+        res.render('user/userHome' , {food})
     }),
 
 
@@ -46,6 +45,34 @@ module.exports = {
         .catch(() => {
             res.render('user/login', { error: 'invalid username or password' })
         })
+    }),
+
+
+    arabian : (async (req , res) => {
+        let obj = req.body
+        let cat = obj.category
+
+        let food =await userHelpers.getfood(cat)
+        res.render('user/userHome' , {food})
+    }),
+
+
+    chinese : (async (req , res) => {
+        let obj = req.body
+        let cat = obj.category
+
+        let food =await userHelpers.getfood(cat)
+        res.render('user/userHome' , {food})
+    }),
+
+
+    indian : (async (req , res) => {
+        let obj = req.body
+        let cat = obj.category
+
+        let food =await userHelpers.getfood(cat)
+        res.render('user/userHome' , {food})
     })
 
 }
+

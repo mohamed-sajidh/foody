@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var db = require('./config/connection')
+var multer = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
 
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');

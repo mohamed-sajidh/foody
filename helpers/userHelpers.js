@@ -1,7 +1,9 @@
+const { promises } = require('fs');
 const { response } = require('../app')
 let collection = require('../config/collection')
 const db = require('../config/connection')
 const bcrypt = require('bcrypt');
+const { resolve } = require('path');
 
 
 
@@ -29,23 +31,44 @@ module.exports = {
             if(user){
                 bcrypt.compare(loginData.password, user.password).then((status) => {
                     if(status) {
-                        console.log("login success");
                         response.user = user
                         response.status = true
                         resolve(response)
                     }
                     else{
-                        console.log("login failed");
                         reject({ status: false })
                     }
                 })
             }
             else{
-                console.log("login failed...................");
                 reject({ status: false })
             }
         })
-    }
+    },
+
+
+    getAllFood : () => {
+        return new Promise((resolve , reject) => {
+            db.get().collection(collection.FOOD_COLLECTION).find().toArray().then((food) => {
+                resolve(food)
+            })
+        })
+    },
+
+
+    getfood: ((category) => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            let product = await db.get().collection(collection.FOOD_COLLECTION).find({ category: category }).toArray();
+            resolve(product);
+          } catch (error) {
+            reject(error);
+          }
+        });
+    })
+
+
+    
 
 
 }

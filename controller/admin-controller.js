@@ -4,7 +4,7 @@ const { Db, ObjectId } = require("mongodb");
 const userHelpers = require('../helpers/userHelpers');
 const adminHelpers = require('../helpers/adminHelpers')
 const { response } = require('../app');
-
+const fs = require('fs')
 
 
 
@@ -19,9 +19,13 @@ module.exports = {
 
     loginSubmit : ((req , res) => { 
         adminHelpers.doLogin(req.body).then(async (response) => {
-            console.log(response , "aaaaaaaaaaaaaaaaaaaaa");
             if(response.status){
-                res.render('admin/adminHome')
+                if(response.admin.isAdmin){
+                    let admin = response
+                    res.render('admin/adminHome' , {admin})
+                }else{
+                    res.render('admin/adminLogin', { error: 'you are not admin' })
+                }
             }
         })
         .catch(() => {
@@ -30,8 +34,9 @@ module.exports = {
     }),
 
 
-    productTable : ((req , res) => {
-        res.render('admin/product')
+    productTable : (async (req , res) => {
+        let product = await adminHelpers.getAllProduct()
+        res.render('admin/product' , { product })
     }),
 
 
@@ -53,6 +58,34 @@ module.exports = {
         adminHelpers.nonAdmin(userId)
         res.redirect('/admin/userTable')
 
+    }),
+
+
+    logout : ((req , res) => {
+        res.redirect('/admin/')
+    }),
+
+
+    addProduct : ((req , res) => {
+        res.render('admin/addProduct')
+    }),
+
+
+    addProductSubmit : ((req , res) => {
+        req.body.img1 = req.files.image1[0].filename
+        req.body.img2 = req.files.image2[0].filename
+
+        adminHelpers.addProduct(req.body).then((response) => {
+            res.redirect('/admin/product')
+
+        })
+
+    }),
+
+
+    editProduct : (async (req , res) => {
+        let product = await adminHelpers.productDetails(req.body.id)
+        res.render('admin/edit')
     })
 
 
